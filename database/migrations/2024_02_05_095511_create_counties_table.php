@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('coat_of_arms');
             $table->timestamps();
         });
-
     }
 
     /**
