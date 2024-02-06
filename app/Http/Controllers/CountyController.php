@@ -11,22 +11,19 @@ class CountyController extends Controller
         $content = json_encode([$counties]);
         return response($content, Response::HTTP_OK);
     }
-    function readCsv($fileName){
-        if (!file_exists($fileName)) {
-            echo "$fileName nem található";
-            return false;
+    function readCsv($fileName) : array{
+        $lines = array();
+        if (file_exists($fileName)) {
+            $csvFile = fopen($fileName, 'r');
+            while (!feof($csvFile)) {
+                $line = fgetcsv($csvFile);
+                $lines[] = $line;
+            }
+            fclose($csvFile);
         }
-        $csvFile = fopen($fileName, 'r');
-        $lines = [];
-        while (!feof($csvFile)) {
-            $line = fgetcsv($csvFile);
-            $lines[] = $line;
-        }
-        fclose($csvFile);
-
         return $lines;
     }
-    function populateDatabase(){
+    function populateDatabase() : void{
         $data = $this->readCsv('zip_codes.csv');
 
         $header = $data[0];
@@ -52,18 +49,23 @@ class CountyController extends Controller
             $this->populateCityTable($cities);
             unset($cities);
         }
+        $this->populateCountyTable($counties);
     }
-    function populateCityTable($cities){
+    function populateCityTable($cities) : void{
         County::table('cities')->insert([
             'county_ID' => $cities[0],
-            'city_name' => $cities[1],
+            'name' => $cities[1],
             'zip_code' => $cities[2],
         ]);
     }
-    function populateCountyTable($counties){
+    function populateCountyTable($counties) : void{
         foreach($counties as $county){
-            County::table('county')->insert([
-
+            County::table('counties')->insert([
+                'name' => $county,
+                'flag' => $county . '.svg',
+                'coat_of_arms' => $county . '_coa.svg',
+                'chief_town' => null,
+                'population' => null,
             ]);
         }
     }

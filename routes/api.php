@@ -18,4 +18,4 @@ use App\Http\Controllers\CountyController;
 Route::get('/user', function (Request $request) {
     return $request->user();
 });
-Route::get('list', [CountyController::class, 'retrieve'])->name('retrieve');
+Route::get('/list', [CountyController::class, 'retrieve'])->name('retrieve');

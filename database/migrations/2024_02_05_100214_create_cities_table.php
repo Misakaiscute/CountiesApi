@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('cities', function (Blueprint $table) {
             $table->id();
             $table->integer('county_ID');
-            $table->string('city_name');
+            $table->string('name');
             $table->integer('postal_code');
             $table->timestamps();
         });
