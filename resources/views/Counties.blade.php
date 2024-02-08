@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -9,7 +8,6 @@
     <title>Magyarország megyéi</title>
 </head>
 <body>
-<form method="post">
     <table>
         <thead>
             <tr>
@@ -24,6 +22,5 @@
             <?php ?>
         </tbody>
     </table>
-</form>
 </body>
 </html>

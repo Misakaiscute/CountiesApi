@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Response;
+use Illuminate\Http\Request;
 use App\Models\County;
 class CountyController extends Controller
 {
-    function retrieve(){
-        $counties = County::orderBy('name')->get();
-        $content = json_encode([$counties]);
-        return response($content, Response::HTTP_OK);
+    static function databaseEmpty()
+    {
+        if (County::count() == 0) {
+            return true;
+        }
+        return false;
     }
-    function readCsv($fileName) : array{
+    private function readCsv(Request $request) : array{
         $lines = array();
-        if (file_exists($fileName)) {
-            $csvFile = fopen($fileName, 'r');
+        if (file_exists($file)) {
+            $csvFile = fopen($file, 'r');
             while (!feof($csvFile)) {
                 $line = fgetcsv($csvFile);
                 $lines[] = $line;
@@ -23,8 +25,10 @@ class CountyController extends Controller
         }
         return $lines;
     }
-    function populateDatabase() : void{
-        $data = $this->readCsv('zip_codes.csv');
+    static function populateDatabase(Request $request) : void{
+        $file = $request->file('file');
+        $data = file($file->getContent());
+        dd($data);
 
         $header = $data[0];
         $county = array_search('county', $header);
@@ -46,19 +50,19 @@ class CountyController extends Controller
                 $counties[] = $oneData[$county];
             }
             $cities = [array_search($oneData[$county], $counties)+1, $oneData[$city], $oneData[$zipCode]];
-            $this->populateCityTable($cities);
+            self::populateCityTable($cities);
             unset($cities);
         }
-        $this->populateCountyTable($counties);
+        self::populateCountyTable($counties);
     }
-    function populateCityTable($cities) : void{
+    private static function populateCityTable($cities) : void{
         County::table('cities')->insert([
             'county_ID' => $cities[0],
             'name' => $cities[1],
             'zip_code' => $cities[2],
         ]);
     }
-    function populateCountyTable($counties) : void{
+    private static function populateCountyTable($counties) : void{
         foreach($counties as $county){
             County::table('counties')->insert([
                 'name' => $county,
