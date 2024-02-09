@@ -106,7 +106,7 @@ class CountyController extends Controller
             return \response()->json(['message' => 'Megye nem található'], Response::HTTP_NOT_FOUND);
         }
 
-        County[$id] = $updatedCounty;
+        County::update($updatedCounty)->where('id' == $id);
         return \response()->json(['message' => 'Megye sikeresen frissítve'], Response::HTTP_OK);
     }
 }
