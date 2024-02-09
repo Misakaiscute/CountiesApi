@@ -16,8 +16,6 @@ return new class extends Migration
             $table->string('name');
             $table->string('chief_town')->nullable();
             $table->integer('population')->nullable();
-            $table->string('flag');
-            $table->string('coat_of_arms');
             $table->timestamps();
         });
     }

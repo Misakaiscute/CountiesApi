@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CountyController;
+use App\Models\County;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,3 +13,8 @@ use App\Http\Controllers\CountyController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+Route::get('/show-all', [CountyController::class, 'all']);
+
+Route::post('/add', [CountyController::class, 'insert']);
+
+Route::delete('/delete/{id}', [CountyController::class, 'delete']);

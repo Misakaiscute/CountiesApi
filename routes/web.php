@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CountyController;
 use App\Models\County;
 
 /*
@@ -13,18 +14,3 @@ use App\Models\County;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/import', function () {
-    return view('emptyDatabase');
-});
-
-Route::post("/import-file", 'CountyController@populateDatabase');
-
-Route::get('/', function () {
-    return view('Counties');
-});
-
-Route::get('/{id}', function ($id){
-    return view('oneCounty', [
-         'county' => County::findOrFail($id)
-        ]);
-});
