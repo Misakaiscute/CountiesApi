@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\County;
-use http\Env\Request;
 use Illuminate\Http\Response;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class CountyController extends Controller
@@ -74,38 +74,32 @@ class CountyController extends Controller
         return response($content, Response::HTTP_OK);
     }
     public function insert(Request $request){
-        $validatedData = $request->validate([
-            'name' => 'required'
+        $name = $request->get('name');
+        County::create([
+            'name' => $name,
+            'flag' => $name . "_flag",
+            'coat_of_arms' => $name . "_coa"
         ]);
-        $county = new County([
-            'name' => $validatedData['name'],
-            'flag' => $validatedData['name'] . "_flag",
-            'coat_of_arms' => $validatedData['name'] . "_coa"
-        ]);
-        $county->save();
 
-        return response()->json($county, Response::HTTP_CREATED);
+        return response(['message' => 'Megye sikeresen hozzáadva'], Response::HTTP_CREATED);
     }
     public function delete($id){
         $county = County::find($id);
 
         if(!$county){
-            return response()->json(['message' => 'Nincs ilyen megye'], Response::HTTP_NOT_FOUND);
+            return response(['message' => 'Nincs ilyen megye'], Response::HTTP_NOT_FOUND);
         }
         $county->delete();
-        return response()->json(['message' => 'Megye sikeresen törölve'], Response::HTTP_OK);
+        return response(['message' => 'Megye sikeresen törölve'], Response::HTTP_OK);
     }
-    public function getById(Request $request){
-        $id = $request->getRequestUrl();
-        ddd($id);
-
+    public function getById($id){
         $county = County::find($id);
 
         if(!$county){
             return response(['message' => 'Megye nem található'], Response::HTTP_NOT_FOUND);
         }
 
-        return response()->json($county, Response::HTTP_OK);
+        return response(json_encode($county), Response::HTTP_OK);
     }
     public function update($id, County $updatedCounty){
         if(!County::find($id)){

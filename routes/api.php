@@ -12,10 +12,9 @@ use App\Http\Controllers\CountyController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::get('/show-all', [CountyController::class, 'all']);
+Route::get('counties', [CountyController::class, 'all'])->name("CountyShow");
+Route::get('counties/{id}', [CountyController::class, 'getById'])->name("CountyGetById");
+Route::get('counties/{name}', [CountyController::class, 'getByName'])->name("CountyGetByName");
+Route::post('counties/add', [CountyController::class, 'insert'])->name("CountyAdd");
+Route::delete('counties/{id}', [CountyController::class, 'delete'])->name("CountyDelete");
 
-Route::post('/add', [CountyController::class, 'insert']);
-
-Route::delete('/delete/{id}', [CountyController::class, 'delete']);
-
-Route::get('/show/{id}', [CountyController::class, 'getById']);
