@@ -13,8 +13,10 @@ use App\Http\Controllers\CountyController;
 |
 */
 Route::get('counties', [CountyController::class, 'all'])->name("CountyShow");
-Route::get('counties/{id}', [CountyController::class, 'getById'])->name("CountyGetById");
-Route::get('counties/{name}', [CountyController::class, 'getByName'])->name("CountyGetByName");
+Route::get('counties/{slug}', [CountyController::class, 'getBySlug'])->name("CountyGetByIdOrName");
 Route::post('counties/add', [CountyController::class, 'insert'])->name("CountyAdd");
 Route::delete('counties/{id}', [CountyController::class, 'delete'])->name("CountyDelete");
+Route::patch('counties/{id}', [CountyController::class, 'update'])->name("CountyUpdate");
+
+Route::get('counties/{countySlug}/city/{citySlug}', [CityController::class, 'getBySlug'])->name("CityGetByIdOrName");
 

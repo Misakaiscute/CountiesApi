@@ -9,104 +9,82 @@ use Illuminate\Support\Facades\DB;
 
 class CountyController extends Controller
 {
-    private static function readCsv($file): array
-    {
-        $lines = array();
-        if (file_exists($file)) {
-            $csvFile = fopen($file, 'r');
-            while (!feof($csvFile)) {
-                $line = fgetcsv($csvFile);
-                $lines[] = $line;
-            }
-            fclose($csvFile);
-        }
-        return $lines;
-    }
-    private static function populateDatabase($file): void
-    {
-        $data = self::readCsv('..\..\..\zip_codes.csv');
-
-        $header = $data[0];
-        $county = array_search('county', $header);
-        $zipCode = array_search('zip_code', $header);
-        $city = array_search('city', $header);
-
-        $isHeader = true;
-        $counties = []; //tömb: megye id előfordulási sorrendben
-
-        foreach ($data as $oneData) {
-            if ($isHeader) {
-                $isHeader = false;
-                continue;
-            }
-            if (!in_array($oneData[$county], $counties)) {
-                $counties[] = $oneData[$county];
-            }
-            $cities = [array_search($oneData[$county], $counties) + 1, $oneData[$city], $oneData[$zipCode]];
-            self::populateCityTable($cities);
-            unset($cities);
-        }
-        self::populateCountyTable($counties);
-    }
-    private static function populateCityTable($cities): void
-    {
-        DB::table('counties')->insert([
-            'county_ID' => $cities[0],
-            'name' => $cities[1],
-            'zip_code' => $cities[2],
-        ]);
-    }
-    private static function populateCountyTable($counties): void
-    {
-        foreach ($counties as $county) {
-            County::table('counties')->insert([
-                'name' => $county,
-                'flag' => $county . '.svg',
-                'coat_of_arms' => $county . '_coa.svg',
-                'chief_town' => null,
-                'population' => null,
-            ]);
-        }
-    }
     public function all(){
-        $counties = County::get();
-        $content = json_encode($counties);
-        return response($content, Response::HTTP_OK);
+        return response(json_encode([
+            'data' => County::get(),
+            'message' => "Sikeres lekérés",
+        ]), Response::HTTP_OK);
     }
     public function insert(Request $request){
-        $name = $request->get('name');
         County::create([
-            'name' => $name,
-            'flag' => $name . "_flag",
-            'coat_of_arms' => $name . "_coa"
+            'name' => $request->get('name'),
+            'flag' => $request->get('name') . "_flag",
+            'coat_of_arms' => $request->get('name') . "_coa",
+            'population' => $request->get('population'),
+            'chief_town' => $request->get('chief_town'),
         ]);
 
-        return response(['message' => 'Megye sikeresen hozzáadva'], Response::HTTP_CREATED);
+        return response(json_encode([
+            'data' => County::where('id', '=', County::count()-1)->get(),
+            'message' => 'Megye sikeresen hozzáadva',
+        ]), Response::HTTP_CREATED);
     }
     public function delete($id){
         $county = County::find($id);
 
-        if(!$county){
-            return response(['message' => 'Nincs ilyen megye'], Response::HTTP_NOT_FOUND);
+        if($county->isEmpty()){
+            return response(json_encode([
+                'data' => [],
+                'message' => 'Nincs ilyen megye',
+            ]), Response::HTTP_NOT_FOUND);
         }
         $county->delete();
-        return response(['message' => 'Megye sikeresen törölve'], Response::HTTP_OK);
+        return response(json_encode([
+            'data' => [],
+            'message' => 'Megye sikeresen törölve',
+        ]), Response::HTTP_OK);
     }
-    public function getById($id){
-        $county = County::find($id);
+    public function getBySlug($slug){
+        if(is_numeric($slug)){
+            $county = County::find($slug);
+            if(!$county->first()){
+                return response([
+                    'data' => [],
+                    'message' => 'Megye nem található',
+                ], Response::HTTP_NOT_FOUND);
+            }
+            return response(json_encode([
+                'data' => $county,
+                'message' => 'Sikeres lekérdezés',
+            ]), Response::HTTP_OK);
+        } else {
+            $county = County::where('name', '=', $slug)->get();
 
-        if(!$county){
-            return response(['message' => 'Megye nem található'], Response::HTTP_NOT_FOUND);
+            if(!$county->first()){
+                return response(json_encode([
+                    'data' => [],
+                    'message' => 'Megye nem található',
+                ]), Response::HTTP_NOT_FOUND);
+            }
+            return response(json_encode([
+                'data' => $county,
+                'message' => 'Sikeres lekérdezés',
+            ]), Response::HTTP_OK);
         }
-
-        return response(json_encode($county), Response::HTTP_OK);
     }
-    public function update($id, County $updatedCounty){
-        if(!County::find($id)){
-            return response()->json(['message' => 'Megye nem található'], Response::HTTP_NOT_FOUND);
-        }
+    public function update(Request $request){
+        County::update([
+            'name' => $request->get('name'),
+            'flag' => $request->get('name') . "_flag",
+            'coat_of_arms' => $request->get('name') . "_coa",
+            'population' => $request->get('population'),
+            'chief_town' => $request->get('chief_town'),
+        ]);
 
-        County::update($updatedCounty)->where('id' == $id);
-        return response()->json(['message' => 'Megye sikeresen frissítve'], Response::HTTP_OK);
+        return response(json_encode([
+            'data' => County::find($request->get('id')),
+            'message' => "Megye sikeresen frissítve",
+        ]),
+            Response::HTTP_OK);
     }
 }
