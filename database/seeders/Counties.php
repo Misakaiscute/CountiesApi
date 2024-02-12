@@ -2,9 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use App\Models\County;
 
 class Counties extends Seeder
@@ -34,7 +32,7 @@ class Counties extends Seeder
     public function run(): void
     {
         foreach (self::COUNTIES as $COUNTY){
-            DB::table('counties')->insert([
+            County::insert([
                 'name' => $COUNTY,
                 'flag' => $COUNTY . "_flag",
                 'coat_of_arms' => $COUNTY . "_coa"

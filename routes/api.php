@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CountyController;
+use App\Http\Controllers\CityController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
