@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CountyController;
-use App\Models\County;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -18,3 +17,5 @@ Route::get('/show-all', [CountyController::class, 'all']);
 Route::post('/add', [CountyController::class, 'insert']);
 
 Route::delete('/delete/{id}', [CountyController::class, 'delete']);
+
+Route::get('/show/{id}', [CountyController::class, 'getById']);

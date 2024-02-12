@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\County;
+use http\Env\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 
 class CountyController extends Controller
 {
@@ -48,7 +50,7 @@ class CountyController extends Controller
     }
     private static function populateCityTable($cities): void
     {
-        County::table('cities')->insert([
+        DB::table('counties')->insert([
             'county_ID' => $cities[0],
             'name' => $cities[1],
             'zip_code' => $cities[2],
@@ -67,8 +69,9 @@ class CountyController extends Controller
         }
     }
     public function all(){
-        $counties = County::all();
-        return response()->json($counties, Response::HTTP_OK);
+        $counties = County::get();
+        $content = json_encode($counties);
+        return response($content, Response::HTTP_OK);
     }
     public function insert(Request $request){
         $validatedData = $request->validate([
@@ -87,26 +90,29 @@ class CountyController extends Controller
         $county = County::find($id);
 
         if(!$county){
-            return \response()->json(['message' => 'Nincs ilyen megye'], Response::HTTP_NOT_FOUND);
+            return response()->json(['message' => 'Nincs ilyen megye'], Response::HTTP_NOT_FOUND);
         }
         $county->delete();
-        return \response()->json(['message' => 'Megye sikeresen törölve'], Response::HTTP_OK);
+        return response()->json(['message' => 'Megye sikeresen törölve'], Response::HTTP_OK);
     }
-    public function getById($id){
+    public function getById(Request $request){
+        $id = $request->getRequestUrl();
+        ddd($id);
+
         $county = County::find($id);
 
         if(!$county){
-            return \response()->json(['message' => 'Megye nem található'], Response::HTTP_NOT_FOUND);
+            return response(['message' => 'Megye nem található'], Response::HTTP_NOT_FOUND);
         }
 
-        return \response()->json($county, Response::HTTP_OK);
+        return response()->json($county, Response::HTTP_OK);
     }
     public function update($id, County $updatedCounty){
         if(!County::find($id)){
-            return \response()->json(['message' => 'Megye nem található'], Response::HTTP_NOT_FOUND);
+            return response()->json(['message' => 'Megye nem található'], Response::HTTP_NOT_FOUND);
         }
 
         County::update($updatedCounty)->where('id' == $id);
-        return \response()->json(['message' => 'Megye sikeresen frissítve'], Response::HTTP_OK);
+        return response()->json(['message' => 'Megye sikeresen frissítve'], Response::HTTP_OK);
     }
 }
