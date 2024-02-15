@@ -43,33 +43,26 @@ class CountyController extends Controller
             'message' => 'Megye sikeresen törölve',
         ]), Response::HTTP_OK);
     }
-    public function getBySlug($slug){
-        if(is_numeric($slug)){
-            $county = County::find($slug);
-            if(!$county->first()){
-                return response([
-                    'data' => [],
-                    'message' => 'Megye nem található',
-                ], Response::HTTP_NOT_FOUND);
+    public function getById($id){
+        if(!is_numeric($id)){
+            $idByCountyName = County::select('id')->where('name', '=', $id)->first();
+            if($idByCountyName->isEmpty()){
+                return redirect()->route('Counties');
+            } else {
+                return redirect()->route('CountyGetById', ['id' => $idByCountyName]);
             }
-            return response(json_encode([
-                'data' => $county,
-                'message' => 'Sikeres lekérdezés',
-            ]), Response::HTTP_OK);
-        } else {
-            $county = County::where('name', '=', $slug)->get();
-
+        }
+            $county = County::find($id);
             if(!$county->first()){
                 return response(json_encode([
                     'data' => [],
-                    'message' => 'Megye nem található',
+                    'message' => 'Megye nem található ilyen id alatt',
                 ]), Response::HTTP_NOT_FOUND);
             }
             return response(json_encode([
                 'data' => $county,
                 'message' => 'Sikeres lekérdezés',
-            ]), Response::HTTP_OK);
-        }
+                ]), Response::HTTP_OK);
     }
     public function update(Request $request){
         County::update([
