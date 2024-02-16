@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\County;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
+use function PHPUnit\Framework\isNull;
 
 class CountyController extends Controller
 {
@@ -46,14 +47,17 @@ class CountyController extends Controller
     public function getById($id){
         if(!is_numeric($id)){
             $idByCountyName = County::select('id')->where('name', '=', $id)->first();
-            if($idByCountyName->isEmpty()){
-                return redirect()->route('Counties');
+            if(!$idByCountyName){
+                return response(json_encode([
+                    'data' => [],
+                    'message' => 'Megye nem található ilyen néven',
+                ]), Response::HTTP_NOT_FOUND);
             } else {
                 return redirect()->route('CountyGetById', ['id' => $idByCountyName]);
             }
         }
-            $county = County::find($id);
-            if(!$county->first()){
+            $county = County::where('id', '=', $id)->first();
+            if(!$county){
                 return response(json_encode([
                     'data' => [],
                     'message' => 'Megye nem található ilyen id alatt',

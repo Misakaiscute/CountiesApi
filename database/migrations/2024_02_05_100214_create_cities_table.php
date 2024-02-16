@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('county_id');
             $table->string('name');
-            $table->integer('postal_code');
+            $table->integer('postal_code')->nullable();
             $table->timestamps();
         });
     }
