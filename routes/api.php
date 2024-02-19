@@ -14,7 +14,7 @@ use App\Http\Controllers\CityController;
 |
 */
 Route::get('counties', [CountyController::class, 'all'])->name("Counties");
-Route::get('counties/{id}', [CountyController::class, 'getById'])->name("CountyGetById");
+Route::get('counties/{id}', [CountyController::class, 'getByIdOrName'])->name("CountyGetByIdOrName");
 Route::post('counties/add', [CountyController::class, 'insert'])->name("CountyAdd");
 Route::delete('counties/{id}', [CountyController::class, 'delete'])->name("CountyDelete");
 Route::patch('counties/{id}', [CountyController::class, 'update'])->name("CountyUpdate");

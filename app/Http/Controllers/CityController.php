@@ -6,7 +6,6 @@ use App\Models\City;
 use App\Models\County;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-
 class CityController extends Controller
 {
     public function getByCountyId($countyId){
