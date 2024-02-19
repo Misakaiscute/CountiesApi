@@ -12,7 +12,7 @@ use function PHPUnit\Framework\isNull;
  *
  * @apiError CountyNotFound Nincs megye ilyen id/név alatt.
  *
- * @apiErrorExample Error-Response:
+ * @apiErrorExample CountyNotFound:
  *  HTTP/1.1 404 Not Found
  *  {
  *       "data": [],
@@ -53,7 +53,8 @@ use function PHPUnit\Framework\isNull;
  *
  * @apiUse CountyNotFoundError
  */
- /**
+
+/**
  * @api {get} /counties/:id Get one county
  * @apiName GetByIdOrName
  * @apiGroup Counties
@@ -72,18 +73,26 @@ use function PHPUnit\Framework\isNull;
  *       "message": "Sikeres lekérés"
  *  }
  *
- * @apiErrorExample Error-Response:
- *  HTTP/1.1 404 Not Found
- *  {
- *       "data": [],
- *       "message": "Nincs megye ilyen id alatt"
- *  }
+ * @apiUse CountyNotFoundError
+ */
+
+/**
+ * @api {post} /counties/add Add new county
+ * @apiName insert
+ * @apiGroup Counties
+ *
+ * @apiBody {String} name Name of county
+ * @apiBody {Number} [population] County's population
+ * @apiBody {String} [chief_town] County's capital
+ *
+ * @apiSuccess {Number} id Id of the county created
+ *
  */
 class CountyController extends Controller
 {
     public function all(){
         $counties = County::get();
-        if($counties->isEmpty()){
+        if(!$counties->first()){
             return response(json_encode([
                 'data' => [],
                 'message' => "Az adatbázis üres",
@@ -147,8 +156,8 @@ class CountyController extends Controller
             'message' => 'Megye sikeresen törölve',
         ]), Response::HTTP_OK);
     }
-    public function update(Request $request){
-        County::update([
+    public function update(Request $request, $id){
+        County::where('id', '=', $id)->update([
             'name' => $request->get('name'),
             'flag' => $request->get('name') . "_flag",
             'coat_of_arms' => $request->get('name') . "_coa",

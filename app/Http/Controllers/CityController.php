@@ -56,8 +56,8 @@ class CityController extends Controller
             'message' => 'Város sikeresen törölve',
         ]), Response::HTTP_OK);
     }
-    public function update($countyId, Request $request){
-        County::update([
+    public function update(Request $request, $countyId, $cityId){
+        City::where('id', '=', $cityId)->update([
             'county_id' => $countyId,
             'name' => $request->get('name'),
             'postal_code' => $request->get('postal_code'),
