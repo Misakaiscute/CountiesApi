@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\County;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
-use function PHPUnit\Framework\isNull;
-
 /**
  * @apiDefine CountyNotFoundError
  *
@@ -96,25 +94,14 @@ class CountyController extends Controller
             return response(json_encode([
                 'data' => [],
                 'message' => "Az adatbázis üres",
-            ]), Response::HTTP_OK);
+            ]), Response::HTTP_NO_CONTENT);
         }
         return response(json_encode([
             'data' => $counties,
             'message' => "Sikeres lekérés",
         ]), Response::HTTP_OK);
     }
-    public function getByIdOrName($id){
-        if(!is_numeric($id)){
-            $idByCountyName = County::select('id')->where('name', '=', $id)->first();
-            if(!$idByCountyName){
-                return response(json_encode([
-                    'data' => [],
-                    'message' => 'Megye nem található ilyen néven',
-                ]), Response::HTTP_NOT_FOUND);
-            } else {
-                return redirect()->route('CountyGetByIdOrName', ['id' => $idByCountyName]);
-            }
-        }
+    public function getById($id){
         $county = County::where('id', '=', $id)->first();
         if(!$county){
             return response(json_encode([
