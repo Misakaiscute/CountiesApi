@@ -9,18 +9,13 @@ use Illuminate\Http\Response;
 class CityController extends Controller
 {
     public function getByCountyId($countyId){
-        if(!is_numeric($countyId)){
-            $idByCountyName = County::select('id')->where('name', '=', $countyId)->first();
-            if(!$idByCountyName){
-                return response(json_encode([
-                    'data' => [],
-                    'message' => 'Megye nem található ilyen néven',
-                ]), Response::HTTP_NOT_FOUND);
-            } else {
-                return redirect()->route('CitiesGetByCountyId', ['countyId' => $idByCountyName]);
-            }
-        }
         $cities = City::where('county_id', '=', $countyId)->get();
+        if (!$cities->first()){
+            return response(json_encode([
+                'data' => [],
+                'message' => 'Megyének nincsenek városai vagy a megye nem létezik',
+            ]), Response::HTTP_NOT_FOUND);
+        }
         return response(json_encode([
             'data' => $cities,
             'message' => 'Sikeres lekérdezés',
