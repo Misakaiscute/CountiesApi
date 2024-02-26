@@ -22,6 +22,8 @@ class CityController extends Controller
         ]), Response::HTTP_OK);
     }
     public function insert(Request $request){
+        $request = json_decode($request->body())->data;
+
         County::create([
             'name' => $request->get('name'),
             'flag' => $request->get('name') . "_flag",
