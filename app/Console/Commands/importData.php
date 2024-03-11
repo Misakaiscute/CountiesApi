@@ -25,6 +25,8 @@ class importData extends Command
 
         $data = $this->readCSV(resource_path($filename), $bar);
         $this->putIntoDB($data, $bar);
+
+        $this->newLine(); $this->info("Data successfully imported");
     }
     public function readCSV($csvFile, $progressBar) : array
     {
