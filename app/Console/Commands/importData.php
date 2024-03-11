@@ -29,7 +29,6 @@ class importData extends Command
     public function readCSV($csvFile, $progressBar) : array
     {
         $progressBar->start();
-        $this->info("Reading file");
 
         $line_of_text = array();
         $file_handle = fopen($csvFile, 'r');
@@ -44,6 +43,7 @@ class importData extends Command
     }
     private function putIntoDB(array $dataArray, $progressBar) : void{
         $progressBar->start();
+        $progressBar->setMessage("Intialization");
 
         $idCounty = array_search("county", $dataArray[0]);
         $idZipcode = array_search("zip_code", $dataArray[0]);
@@ -86,7 +86,7 @@ class importData extends Command
     }
     private function addToCityDB($zipcode, $name, $countyId){
         City::create([
-            'county_id' => $countyId,
+            'county_id' => $countyId + 1,
             'name' => $name,
             'postal_code' => $zipcode,
         ]);
