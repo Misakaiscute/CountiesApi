@@ -24,16 +24,14 @@ class CityController extends Controller
     public function insert(Request $request){
         $request = json_decode($request->body())->data;
 
-        County::create([
+        City::create([
+            'county_id' => $request->get('county_id'),
             'name' => $request->get('name'),
-            'flag' => $request->get('name') . "_flag",
-            'coat_of_arms' => $request->get('name') . "_coa",
-            'population' => $request->get('population'),
-            'chief_town' => $request->get('chief_town'),
+            'postal_code' => $request->get('postal_code'),
         ]);
 
         return response(json_encode([
-            'data' => County::where('id', '=', County::count()-1)->get(),
+            'data' => City::where('id', '=', City::count()-1)->get(),
             'message' => 'Megye sikeresen hozzáadva',
         ]), Response::HTTP_CREATED);
     }

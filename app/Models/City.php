@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class City extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'county_ID', 'postal_code'];
+    protected $fillable = ['name', 'county_id', 'postal_code'];
     protected $table = 'cities';
 
     function county() : HasMany{
