@@ -10,6 +10,7 @@ class importData extends Command
 {
     protected $signature = 'app:import-data {filename=zip_codes.csv : Name of the file containing the data}';
     protected $description = 'Input data into the database';
+
     public function handle() : void
     {
         $filename = $this->argument('filename');
@@ -86,7 +87,7 @@ class importData extends Command
         }
         $progressBar->finish();
     }
-    private function addToCityDB($zipcode, $name, $countyId){
+    private function addToCityDB($zipcode, $name, $countyId) : void{
         City::create([
             'county_id' => $countyId + 1,
             'name' => $name,
